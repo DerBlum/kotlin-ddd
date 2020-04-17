@@ -1,0 +1,28 @@
+version: '2.0'
+
+services:
+
+  kotlin-ddd:
+    build: Dockerfile_With_Build_Step
+    image: kotlin-ddd:0.0.1-SNAPSHOT
+    container_name: kotlin-ddd
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+
+  database:
+    image: mongo:4.2.5
+    container_name: kotlin-ddd-mongo
+    environment:
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_USERNAME=demo
+      - MONGO_INITDB_PASSWORD=demo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo_data:/data/db
+
+volumes:
+  mongo_data:
+

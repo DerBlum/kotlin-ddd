@@ -1,0 +1,14 @@
+FROM openjdk:11.0.6-jdk as build
+
+COPY / /usr/src/app
+
+WORKDIR /usr/src/app
+
+RUN ./gradlew build
+
+
+FROM openjdk:11.0.6-jre as run
+
+ENTRYPOINT ["sh", "-c", "java -jar app.jar"]
+
+COPY --from=build usr/src/app/build/libs/*.jar app.jar
