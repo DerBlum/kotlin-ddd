@@ -4,11 +4,11 @@ import com.ddd.library.domain.model.book.Book
 import com.ddd.library.domain.model.book.BookRepository
 import com.ddd.library.domain.model.book.ISBN
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import com.ddd.library.adapter.db.mongo.entity.Book as DbBook
 
 /** Created by sblum on 07.04.20 */
-@Component
+@Repository
 class MongoDbAdapter @Autowired constructor(var bookDbRepository: BookDbRepository) : BookRepository {
 
     override fun add(book: Book): Book {
