@@ -6,6 +6,8 @@ services:
     build: Dockerfile_With_Build_Step
     image: kotlin-ddd:0.0.1-SNAPSHOT
     container_name: kotlin-ddd
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
     ports:
       - 8080:8080
     depends_on:
@@ -14,15 +16,21 @@ services:
   database:
     image: mongo:4.2.5
     container_name: kotlin-ddd-mongo
+    restart: always
     environment:
-      - MONGO_INITDB_DATABASE=test
-      - MONGO_INITDB_USERNAME=demo
-      - MONGO_INITDB_PASSWORD=demo
+      - MONGO_INITDB_DATABASE=library
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpw
     ports:
       - 27017:27017
     volumes:
       - ./mongo_data:/data/db
+      - ./config/local/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
 volumes:
   mongo_data:
 
+networks:
+  default:
+    external:
+      name: docker-demo-network
