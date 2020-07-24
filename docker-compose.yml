@@ -1,4 +1,4 @@
-version: '2.0'
+version: '2.4'
 
 services:
 
@@ -6,12 +6,19 @@ services:
     build: Dockerfile_With_Build_Step
     image: kotlin-ddd:0.0.1-SNAPSHOT
     container_name: kotlin-ddd
+    restart: on-failure
     environment:
       - SPRING_PROFILES_ACTIVE=local
     ports:
       - 8080:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/book"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   database:
     image: mongo:4.2.5
@@ -23,6 +30,11 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=rootpw
     ports:
       - 27017:27017
+    healthcheck:
+      test: ["CMD-SHELL", "if mongo --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'; then echo '0'; fi; echo '1';" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     volumes:
       - ./mongo_data:/data/db
       - ./config/local/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
